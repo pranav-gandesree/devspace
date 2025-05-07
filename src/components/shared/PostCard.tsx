@@ -85,11 +85,25 @@ const PostCard = ({ post, isSaved = false, onToggleSave }: PostCardProps) => {
       <Link to={`/posts/${post.id}`}>
         <div className="small-medium lg:base-medium py-5">
           <p>{post.caption}</p>
-          <ul className="flex gap-1 mt-2">
+          {/* <ul className="flex gap-1 mt-2">
             {post.tags.map((tag: string) => (
               <li key={tag} className="text-light-3">#{tag}</li>
             ))}
-          </ul>
+          </ul> */}
+          
+
+<ul className="flex gap-1 mt-2">
+  {(Array.isArray(post.tags) 
+    ? post.tags
+    : typeof post.tags === "string"
+      ? (post.tags as string).split(',').map(tag => tag.trim())
+      : []
+  ).map((tag: string) => (
+    <li key={tag} className="text-light-3">#{tag}</li>
+  ))}
+</ul>
+
+
         </div>
         <img
           src={post.image_url || "/assets/icons/profile-placeholder.svg"}
