@@ -21,7 +21,6 @@ import { supabase } from "@/lib/supabase/SupabaseClient";
 const SigninForm = () => {
   const navigate = useNavigate();
 
-
   const form = useForm<z.infer<typeof SigninValidation>>({
     resolver: zodResolver(SigninValidation),
     defaultValues: {
@@ -33,16 +32,24 @@ const SigninForm = () => {
   const handleSignin = async (values: { email: string; password: string }) => {
     const { email, password } = values;
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (error) {
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      if (data.session) {
+        // Set the session in Supabase client
+        await supabase.auth.setSession(data.session);
+        navigate("/");
+      }
+    } catch (error: any) {
       alert(error.message);
-    } else {
-      navigate("/");
-      console.log("Logged in:", data);
     }
   };
 

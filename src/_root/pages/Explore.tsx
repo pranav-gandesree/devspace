@@ -124,6 +124,10 @@ const Explore = () => {
         </div>
       </div>
 
+
+
+
+
       {/* Posts or Search Results */}
       <div className="flex flex-wrap gap-9 w-full max-w-5xl">
         {shouldShowSearchResults ? (

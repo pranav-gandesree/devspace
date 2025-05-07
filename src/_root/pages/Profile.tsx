@@ -1,131 +1,475 @@
+// import React, { useEffect, useState } from 'react';
+// import { useParams } from 'react-router-dom';
+// import {
+//   User,
+//   MessageCircle,
+//   Heart,
+//   BookOpen,
+//   Calendar,
+//   MapPin,
+//   Link as LinkIcon,
+// } from 'lucide-react';
+// import { createClient } from '@supabase/supabase-js';
+
+// const supabase = createClient(
+//   import.meta.env.VITE_SUPABASE_URL || '',
+//   import.meta.env.VITE_SUPABASE_ANON_KEY || ''
+// );
+
+// interface UserData {
+//   id: string;
+//   name?: string;
+//   full_name?: string;
+//   username: string;
+//   bio?: string;
+//   avatar_url?: string;
+//   location?: string;
+//   website?: string;
+//   created_at?: string;
+//   followers?: number;
+//   following?: number;
+// }
+
+// interface Post {
+//   id: string;
+//   user_id: string;
+//   content: string;
+//   image_url?: string;
+//   created_at: string;
+//   comment_count?: number;
+//   like_count?: number;
+//   save_count?: number;
+// }
+
+// const Profile = () => {
+//   const { userId } = useParams<{ userId: string }>();
+//   const [userData, setUserData] = useState<UserData | null>(null);
+//   const [posts, setPosts] = useState<Post[]>([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState<string | null>(null);
+
+//   useEffect(() => {
+//     if (!userId) return;
+
+//     let isMounted = true;
+
+//     const fetchUserData = async () => {
+//       try {
+//         setLoading(true);
+
+//         const { data: userData, error: userError } = await supabase
+//           .from('profiles')
+//           .select('*')
+//           .eq('id', userId)
+//           .single();
+
+//         console.log("User data from profile is:", userData);
+//         if (userError) throw userError;
+
+//         const { data: postsData, error: postsError } = await supabase
+//           .from('posts')
+//           .select('*')
+//           .eq('creator', userId)
+//           .order('created_at', { ascending: false });
+
+//         console.log("Posts data from profile is:", postsData);
+//         if (postsError) throw postsError;
+
+//         if (isMounted) {
+//           setUserData(userData);
+//           setPosts(postsData);
+//           setLoading(false);
+//         }
+//       } catch (err: any) {
+//         if (isMounted) {
+//           setError(err.message || 'Failed to load profile');
+//           setLoading(false);
+//         }
+//       }
+//     };
+
+//     fetchUserData();
+
+//     return () => {
+//       isMounted = false;
+//     };
+//   }, [userId]);
+
+//   if (loading) {
+//     return <div className="text-center mt-10 text-xl font-semibold">Loading...</div>;
+//   }
+
+//   if (error) {
+//     return <div className="text-center mt-10 text-red-500 text-xl">{error}</div>;
+//   }
+
+//   if (!userData) return null;
+
+//   return (
+//     <div className="max-w-4xl mx-auto p-4">
+//       {/* Profile Header */}
+//       <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+//         <div className="h-32 bg-gradient-to-r from-blue-400 to-purple-500"></div>
+//         <div className="p-6 relative">
+//           <div className="absolute -top-12 left-6">
+//             <div className="w-24 h-24 rounded-full bg-white p-1">
+//               {userData.avatar_url ? (
+//                 <img
+//                   src={userData.avatar_url}
+//                   alt="Profile"
+//                   className="w-full h-full rounded-full object-cover"
+//                 />
+//               ) : (
+//                 <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center">
+//                   <User size={40} className="text-gray-400" />
+//                 </div>
+//               )}
+//             </div>
+//           </div>
+
+//           <div className="mt-12">
+//             <h1 className="text-2xl font-bold">{userData.full_name || userData.name}</h1>
+//             <p className="text-gray-500">@{userData.username}</p>
+//             {userData.bio && <p className="mt-4 text-gray-700">{userData.bio}</p>}
+
+//             <div className="mt-4 flex flex-wrap gap-4">
+//               {userData.location && (
+//                 <div className="flex items-center text-gray-600">
+//                   <MapPin size={16} className="mr-1" />
+//                   <span>{userData.location}</span>
+//                 </div>
+//               )}
+
+//               {userData.website && (
+//                 <div className="flex items-center text-blue-500">
+//                   <LinkIcon size={16} className="mr-1" />
+//                   <a
+//                     href={userData.website}
+//                     target="_blank"
+//                     rel="noopener noreferrer"
+//                   >
+//                     {userData.website.replace(/(^\w+:|^)\/\//, '')}
+//                   </a>
+//                 </div>
+//               )}
+
+//               {userData.created_at && (
+//                 <div className="flex items-center text-gray-600">
+//                   <Calendar size={16} className="mr-1" />
+//                   <span>
+//                     Joined{' '}
+//                     {new Date(userData.created_at).toLocaleDateString('en-US', {
+//                       month: 'long',
+//                       year: 'numeric',
+//                     })}
+//                   </span>
+//                 </div>
+//               )}
+//             </div>
+
+//             <div className="mt-6 flex gap-4">
+//               <div className="text-gray-700">
+//                 <span className="font-bold">{userData.following || 0}</span>{' '}
+//                 Following
+//               </div>
+//               <div className="text-gray-700">
+//                 <span className="font-bold">{userData.followers || 0}</span>{' '}
+//                 Followers
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Posts */}
+//       <div className="space-y-6">
+//         {posts.length === 0 ? (
+//           <div className="text-center py-12 text-gray-500">No posts yet</div>
+//         ) : (
+//           posts.map((post) => (
+//             <div
+//               key={post.id}
+//               className="bg-white rounded-lg shadow-sm p-4 border border-gray-100"
+//             >
+//               <div className="flex items-start">
+//                 <div className="mr-3">
+//                   {userData.avatar_url ? (
+//                     <img
+//                       src={userData.avatar_url}
+//                       alt="Avatar"
+//                       className="w-10 h-10 rounded-full object-cover"
+//                     />
+//                   ) : (
+//                     <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+//                       <User size={20} className="text-gray-400" />
+//                     </div>
+//                   )}
+//                 </div>
+
+//                 <div className="flex-1">
+//                   <div className="flex items-center">
+//                     <span className="font-semibold">{userData.name}</span>
+//                     <span className="ml-2 text-gray-500">@{userData.username}</span>
+//                     <span className="mx-1 text-gray-500">·</span>
+//                     <span className="text-gray-500 text-sm">
+//                       {new Date(post.created_at).toLocaleDateString('en-US', {
+//                         month: 'short',
+//                         day: 'numeric',
+//                         year: 'numeric',
+//                       })}
+//                     </span>
+//                   </div>
+
+//                   <div className="mt-2">
+//                     <p className="text-gray-800">{post.content}</p>
+//                     {post.image_url && (
+//                       <div className="mt-3">
+//                         <img
+//                           src={post.image_url}
+//                           alt="Post"
+//                           className="rounded-lg max-h-96 object-cover"
+//                         />
+//                       </div>
+//                     )}
+//                   </div>
+
+//                   <div className="mt-4 flex items-center gap-6 text-gray-500">
+//                     <div className="flex items-center hover:text-blue-500 cursor-pointer">
+//                       <MessageCircle size={18} className="mr-1" />
+//                       <span>{post.comment_count || 0}</span>
+//                     </div>
+//                     <div className="flex items-center hover:text-red-500 cursor-pointer">
+//                       <Heart size={18} className="mr-1" />
+//                       <span>{post.like_count || 0}</span>
+//                     </div>
+//                     <div className="flex items-center hover:text-green-500 cursor-pointer">
+//                       <BookOpen size={18} className="mr-1" />
+//                       <span>{post.save_count || 0}</span>
+//                     </div>
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//           ))
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Profile;
+
+
+
+
+
+
+
+
+
+
+
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import {
-  Route,
-  Routes,
-  Link,
-  Outlet,
-  useParams,
-  useLocation,
-} from "react-router-dom";
+  User,
+  MessageCircle,
+  Heart,
+  BookOpen,
+  Calendar,
+  MapPin,
+  Link as LinkIcon,
+  Home,
+  Compass,
+  Users,
+  Bookmark,
+  PenTool,
+  LogOut
+} from 'lucide-react';
+import { createClient } from '@supabase/supabase-js';
 
-import { LikedPosts } from "@/_root/pages";
-import { useUserContext } from "@/context/UserContext";
-import { GridPostList } from "@/components/shared";
-
-interface StatBlockProps {
-  value: string | number;
-  label: string;
-}
-
-const StatBlock = ({ value, label }: StatBlockProps) => (
-  <div className="flex-center gap-2">
-    <p className="small-semibold lg:body-bold text-primary-500">{value}</p>
-    <p className="small-medium lg:base-medium text-light-2">{label}</p>
-  </div>
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL || '',
+  import.meta.env.VITE_SUPABASE_ANON_KEY || ''
 );
 
+interface UserData {
+  id: string;
+  name?: string;
+  full_name?: string;
+  username: string;
+  bio?: string;
+  avatar_url?: string;
+  location?: string;
+  website?: string;
+  created_at?: string;
+  followers?: number;
+  following?: number;
+}
+
+interface Post {
+  id: string;
+  user_id: string;
+  content: string;
+  image_url?: string;
+  created_at: string;
+  comment_count?: number;
+  like_count?: number;
+  save_count?: number;
+}
+
 const Profile = () => {
-  const { id } = useParams();
-  const { pathname } = useLocation();
-  const { user } = useUserContext();
+  const { userId } = useParams<{ userId: string }>();
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('posts');
 
-  const isCurrentUser = user.id === id;
+  useEffect(() => {
+    if (!userId) return;
 
-  // If not the current user, you might want to redirect or show error
-  if (!isCurrentUser) {
-    return (
-      <div className="flex-center w-full h-full text-light-3 text-xl">
-        This profile is not available.
-      </div>
-    );
+    let isMounted = true;
+
+    const fetchUserData = async () => {
+      try {
+        setLoading(true);
+
+        const { data: userData, error: userError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .single();
+
+        if (userError) throw userError;
+
+        const { data: postsData, error: postsError } = await supabase
+          .from('posts')
+          .select('*')
+          .eq('creator', userId)
+          .order('created_at', { ascending: false });
+
+        if (postsError) throw postsError;
+
+        if (isMounted) {
+          setUserData(userData);
+          setPosts(postsData);
+          setLoading(false);
+        }
+      } catch (err: any) {
+        if (isMounted) {
+          setError(err.message || 'Failed to load profile');
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchUserData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [userId]);
+
+  if (loading) {
+    return <div className="text-center mt-10 text-xl font-semibold text-white">Loading...</div>;
   }
 
+  if (error) {
+    return <div className="text-center mt-10 text-red-500 text-xl">{error}</div>;
+  }
+
+  if (!userData) return null;
+
+  // Mock post data to match the screenshot
+
   return (
-    <div className="profile-container">
-      <div className="profile-inner_container">
-        <div className="flex xl:flex-row flex-col max-xl:items-center flex-1 gap-7">
-          <img
-            src={user.imageUrl || "/assets/icons/profile-placeholder.svg"}
-            alt="profile"
-            className="w-28 h-28 lg:h-36 lg:w-36 rounded-full"
-          />
-          <div className="flex flex-col flex-1 justify-between md:mt-2">
-            <div className="flex flex-col w-full">
-              <h1 className="text-center xl:text-left h3-bold md:h1-semibold w-full">
-                {user.name}
-              </h1>
-              <p className="small-regular md:body-medium text-light-3 text-center xl:text-left">
-                @{user.username}
-              </p>
-            </div>
+    <div className="flex min-h-screen bg-black text-white">
 
-            <div className="flex gap-8 mt-10 items-center justify-center xl:justify-start flex-wrap z-20">
-              <StatBlock value={user.posts.length} label="Posts" />
-              <StatBlock value={20} label="Followers" />
-              <StatBlock value={20} label="Following" />
-            </div>
 
-            <p className="small-medium md:base-medium text-center xl:text-left mt-7 max-w-screen-sm">
-              {user.bio}
-            </p>
+      {/* Main Content */}
+      <div className="flex-1">
+        {/* Profile Header */}
+        <div className="py-6 px-8 flex items-center justify-between">
+          <div className="flex items-center">
+            <div className="w-16 h-16 rounded-full bg-orange-400 flex items-center justify-center text-black text-2xl font-bold mr-4">
+              AB
+            </div>
+            <div>
+            <h1 className="text-2xl font-bold">{userData.name}</h1>
+             
+            </div>
           </div>
+          <button className="px-3 py-2 border border-gray-700 rounded-md text-sm hover:bg-gray-800">
+            Edit Profile
+          </button>
+        </div>
 
-          <div className="flex justify-center gap-4">
-            <Link
-              to={`/update-profile/${user.id}`}
-              className="h-12 bg-dark-4 px-5 text-light-1 flex-center gap-2 rounded-lg"
+        {/* Stats */}
+        <div className="px-8 py-4 flex space-x-6">
+          <div className="flex items-center space-x-2">
+            <span className="font-semibold">5</span>
+            <span className="text-gray-400">Posts</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="font-semibold">20</span>
+            <span className="text-gray-400">Followers</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="font-semibold">20</span>
+            <span className="text-gray-400">Following</span>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="border-b border-gray-800 px-8">
+          <div className="flex">
+            <button 
+              className={`py-3 px-4 ${activeTab === 'posts' ? 'border-b-2 border-blue-500' : ''}`}
+              onClick={() => setActiveTab('posts')}
             >
-              <img
-                src={"/assets/icons/edit.svg"}
-                alt="edit"
-                width={20}
-                height={20}
-              />
-              <p className="flex whitespace-nowrap small-medium">Edit Profile</p>
-            </Link>
+              <div className="flex items-center">
+                <MessageCircle size={18} className="mr-2" />
+                <span>Posts</span>
+              </div>
+            </button>
+            <button 
+              className={`py-3 px-4 ${activeTab === 'liked' ? 'border-b-2 border-blue-500' : ''}`}
+              onClick={() => setActiveTab('liked')}
+            >
+              <div className="flex items-center">
+                <Heart size={18} className="mr-2" />
+                <span>Liked Posts</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        {/* Posts Grid */}
+        <div className="p-8">
+          <div className="grid grid-cols-3 gap-4">
+            {posts.map((post) => (
+              <div key={post.id} className="relative rounded-lg overflow-hidden group">
+                <img 
+                  src={post.image_url} 
+                  alt="Post" 
+                  className="w-full h-48 object-cover"
+                />
+                <div className="absolute bottom-2 left-2 flex items-center space-x-3">
+                  <div className="flex items-center text-white">
+                    <Heart size={16} className="mr-1 fill-red-500 text-red-500" />
+                    <span className="text-sm">{post.like_count}</span>
+                  </div>
+                  <div className="flex items-center text-white">
+                    <BookOpen size={16} className="mr-1" />
+                    <span className="text-sm">{post.save_count}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
-
-      <div className="flex max-w-5xl w-full">
-        <Link
-          to={`/profile/${id}`}
-          className={`profile-tab rounded-l-lg ${
-            pathname === `/profile/${id}` && "!bg-dark-3"
-          }`}
-        >
-          <img
-            src={"/assets/icons/posts.svg"}
-            alt="posts"
-            width={20}
-            height={20}
-          />
-          Posts
-        </Link>
-        <Link
-          to={`/profile/${id}/liked-posts`}
-          className={`profile-tab rounded-r-lg ${
-            pathname === `/profile/${id}/liked-posts` && "!bg-dark-3"
-          }`}
-        >
-          <img
-            src={"/assets/icons/like.svg"}
-            alt="like"
-            width={20}
-            height={20}
-          />
-          Liked Posts
-        </Link>
-      </div>
-
-      <Routes>
-        <Route
-          index
-          element={<GridPostList posts={user.posts} showUser={false} />}
-        />
-        <Route path="/liked-posts" element={<LikedPosts />} />
-      </Routes>
-
-      <Outlet />
     </div>
   );
 };

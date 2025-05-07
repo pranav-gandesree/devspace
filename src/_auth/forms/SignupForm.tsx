@@ -79,7 +79,7 @@ const SignupForm = () => {
         const { error: profileError } = await supabase.from("profiles").upsert({
           id: user.id,
           name: name,
-          avatar_url: null, // or get from user.user_metadata?.avatar_url
+          avatar_url: user.user_metadata?.avatar_urll
         });
   
         if (profileError) {
