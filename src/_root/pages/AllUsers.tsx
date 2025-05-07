@@ -1,57 +1,17 @@
-import { useEffect, useState } from 'react'
-import { supabase } from "@/lib/supabase/SupabaseClient"
+import { useState } from 'react'
 import { User, Search } from 'lucide-react'
 import { Input } from "@/components/ui/input"
-import { debounce } from 'lodash'
-
-interface UserProfile {
-  id: string
-  name: string
-  email: string
-  avatar_url: string | null
-  created_at: string
-}
+import { useUsersContext } from '@/context/UsersContext'
 
 const AllUsers = () => {
-  const [users, setUsers] = useState<UserProfile[]>([])
-  const [filteredUsers, setFilteredUsers] = useState<UserProfile[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { filteredUsers, loading, error, searchUsers } = useUsersContext()
   const [searchQuery, setSearchQuery] = useState('')
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .order('created_at', { ascending: false })
-
-        if (error) throw error
-
-        setUsers(data || [])
-        setFilteredUsers(data || [])
-      } catch (err: any) {
-        setError(err.message)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchUsers()
-  }, [])
-
-  const handleSearch = debounce((query: string) => {
-    const filtered = users.filter(user => 
-      user.name?.toLowerCase().includes(query.toLowerCase()) ||
-      user.email?.toLowerCase().includes(query.toLowerCase())
-    )
-    setFilteredUsers(filtered)
-  }, 300)
-
-  useEffect(() => {
-    handleSearch(searchQuery)
-  }, [searchQuery])
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value
+    setSearchQuery(query)
+    searchUsers(query)
+  }
 
   if (loading) {
     return (
@@ -84,7 +44,7 @@ const AllUsers = () => {
                 placeholder="Search users by name or email..."
                 className="bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-white placeholder:text-gray-400 w-full"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handleSearchChange}
               />
             </div>
           </div>
