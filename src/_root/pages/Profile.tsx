@@ -6,6 +6,7 @@ import {
 
 } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
+import { useUserContext } from '@/context/UserContext';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL || '',
@@ -37,6 +38,7 @@ interface Post {
 
 const Profile = () => {
   const { userId } = useParams<{ userId: string }>();
+  const { user: currentUser } = useUserContext();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
@@ -100,6 +102,9 @@ const Profile = () => {
 
   if (!userData) return null;
 
+  // Check if the current user is the profile owner
+  const isProfileOwner = currentUser && currentUser.id === userId;
+
   // Mock post data to match the screenshot
 
   return (
@@ -126,12 +131,14 @@ const Profile = () => {
 
            
           </div>
-          <Link 
-            to={`/update-profile/${userId}`}
-            className="px-6 py-2 border border-gray-700 rounded-md text-sm hover:bg-gray-800 transition-colors"
-          >
-            Edit Profile
-          </Link>
+          {isProfileOwner && (
+            <Link 
+              to={`/update-profile/${userId}`}
+              className="px-6 py-2 border border-gray-700 rounded-md text-sm hover:bg-gray-800 transition-colors"
+            >
+              Edit Profile
+            </Link>
+          )}
         </div>
 
 
