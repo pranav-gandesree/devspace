@@ -78,11 +78,11 @@ const AllUsers = () => {
         <div className="mb-8">
           <div className="relative">
             <div className="flex gap-1 px-4 w-full rounded-lg bg-gray-900">
-              <Search className="w-5 h-5 opacity-50" />
+              <Search className="w-5 h-5 opacity-50 mt-3" />
               <Input
                 type="text"
                 placeholder="Search users by name or email..."
-                className="bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-white placeholder:text-gray-400"
+                className="bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-white placeholder:text-gray-400 w-full"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />

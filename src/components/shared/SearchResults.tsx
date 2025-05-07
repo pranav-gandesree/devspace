@@ -3,8 +3,7 @@ import GridPostList from "./GridPostList";
 
 type SearchResultProps = {
   isSearchFetching: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  searchedPosts: any;
+  searchedPosts: any[];
 };
 
 const SearchResults = ({
@@ -13,8 +12,8 @@ const SearchResults = ({
 }: SearchResultProps) => {
   if (isSearchFetching) return <Loader />;
 
-  if (searchedPosts && searchedPosts.documents.length > 0) {
-    return <GridPostList posts={searchedPosts.documents} />;
+  if (searchedPosts && searchedPosts.length > 0) {
+    return <GridPostList posts={searchedPosts} />;
   }
 
   return(

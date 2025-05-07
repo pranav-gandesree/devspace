@@ -1,8 +1,8 @@
-## WORK-HIVE: A Social Hub for Developers ‍  
+## Dev Space: A Social Hub for Developers ‍  
 
-# Work-Hive
+# Dev Space
 
-Work-Hive is a social media platform built with **React.js**, **TypeScript**, and cutting-edge technologies, designed specifically for developers to connect, share, and thrive in their DevLife. 
+Dev Space is a social media platform built with **React.js**, **TypeScript**, and cutting-edge technologies, designed specifically for developers to connect, share, and thrive in their DevLife. 
 
 **Key Features:**
 
@@ -36,7 +36,7 @@ Work-Hive is a social media platform built with **React.js**, **TypeScript**, an
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/akcharlie24/Work-Hive
+   git clone https://github.com/akcharlie24/Dev Space
    ```
 
 2. **Install dependencies:**
@@ -51,13 +51,13 @@ Work-Hive is a social media platform built with **React.js**, **TypeScript**, an
    npm run dev
    ```
 
-This will launch Work-Hive in your browser, typically at `http://localhost:3000/`.
+This will launch Dev Space in your browser, typically at `http://localhost:3000/`.
 
 ## Live Demo:
 
-Check out Work-Hive in action at: 
+Check out Dev Space in action at: 
 
-[https://work-hive-black.vercel.app/](https://work-hive-black.vercel.app/) 
+[https://Dev Space-black.vercel.app/](https://Dev Space-black.vercel.app/) 
 
 ## Screenshots
 
@@ -71,8 +71,8 @@ Check out Work-Hive in action at:
 
 ![CreatePost](https://i.postimg.cc/T2NCTb9X/Screenshot-2024-06-01-at-7-34-18-PM.png)
 
-## Work-Hive: A Project Worth Bragging About!
+## Dev Space: A Project Worth Bragging About!
 
-Work-Hive is a remarkable project that caters to the specific needs of developers. It combines the power of social media with the technical prowess of React.js and TypeScript, creating a platform that fosters a vibrant developer community. With its clean architecture, robust tech stack, and exciting roadmap, Work-Hive is poised to make a significant impact in the developer landscape.
+Dev Space is a remarkable project that caters to the specific needs of developers. It combines the power of social media with the technical prowess of React.js and TypeScript, creating a platform that fosters a vibrant developer community. With its clean architecture, robust tech stack, and exciting roadmap, Dev Space is poised to make a significant impact in the developer landscape.
 
 **Feel free to contribute to the project (Create PRs and suggest changes wherever you feel necessary)** 

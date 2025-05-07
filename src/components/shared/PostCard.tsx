@@ -14,6 +14,7 @@ type PostCardProps = {
 const PostCard = ({ post, isSaved = false, onToggleSave }: PostCardProps) => {
   const { user } = useUserContext();
   const [localSaved, setLocalSaved] = React.useState(isSaved);
+  const [isLiked, setIsLiked] = React.useState(false);
 
   React.useEffect(() => {
     setLocalSaved(isSaved);
@@ -43,6 +44,13 @@ const PostCard = ({ post, isSaved = false, onToggleSave }: PostCardProps) => {
       await supabase.from('saved_posts').delete().eq('user_id', user.id).eq('post_id', post.id);
       setLocalSaved(false);
     }
+  };
+
+  const handleLikeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    // This just handles the frontend toggle without backend updates
+    setIsLiked(!isLiked);
   };
 
   return (
@@ -91,8 +99,39 @@ const PostCard = ({ post, isSaved = false, onToggleSave }: PostCardProps) => {
       </Link>
 
       <div className="flex gap-4 items-center px-4 py-2">
-        {/* Love (heart) icon - static */}
-        <img src="/assets/icons/like.svg" alt="love" width={24} height={24} style={{ cursor: 'pointer' }} />
+        {/* Like (heart) icon - toggleable */}
+        <div onClick={handleLikeClick} style={{ cursor: 'pointer' }}>
+          {isLiked ? (
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="24" 
+              height="24" 
+              viewBox="0 0 24 24" 
+              fill="#e11d48" 
+              stroke="#e11d48" 
+              strokeWidth="1" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            >
+              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+            </svg>
+          ) : (
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="24" 
+              height="24" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="1.5" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            >
+              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+            </svg>
+          )}
+        </div>
+        
         {/* Bookmark (save) icon */}
         <img
           src={localSaved ? "/assets/icons/saved.svg" : "/assets/icons/bookmark.svg"}

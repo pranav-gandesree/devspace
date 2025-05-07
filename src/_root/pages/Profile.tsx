@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import {
   MessageCircle,
   Heart,
@@ -108,18 +108,40 @@ const Profile = () => {
         {/* Profile Header */}
         <div className="py-8 flex items-center justify-between">
           <div className="flex items-center space-x-6">
-            <div className="w-24 h-24 rounded-full bg-orange-400 flex items-center justify-center text-black text-3xl font-bold">
-              {userData.name?.charAt(0) || 'U'}
+            <div className="w-24 h-24 rounded-full bg-orange-400 flex items-center justify-center text-black text-3xl font-bold overflow-hidden">
+              {userData.avatar_url ? (
+                <img 
+                  src={userData.avatar_url} 
+                  alt={userData.name || 'Profile'} 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                userData.name?.charAt(0) || 'U'
+              )}
             </div>
             <div>
               <h1 className="text-3xl font-bold mb-2">{userData.name}</h1>
-              <p className="text-gray-400">{userData.bio || 'No bio yet'}</p>
+
             </div>
+
+           
           </div>
-          <button className="px-6 py-2 border border-gray-700 rounded-md text-sm hover:bg-gray-800 transition-colors">
+          <Link 
+            to={`/update-profile/${userId}`}
+            className="px-6 py-2 border border-gray-700 rounded-md text-sm hover:bg-gray-800 transition-colors"
+          >
             Edit Profile
-          </button>
+          </Link>
         </div>
+
+
+        <div>
+              <p className="text-gray-400">{userData.bio || 'No bio yet'}</p>
+                <p className="text-gray-400">{userData.location || 'No location '}</p>
+                
+                <p className="text-gray-400">{userData.website || 'No website'}</p>
+            </div>
+            
 
         {/* Stats */}
         <div className="py-6 flex space-x-12 border-b border-gray-800">
