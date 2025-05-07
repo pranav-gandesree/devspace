@@ -146,7 +146,8 @@ const PostForm = ({ post, action }: any) => {
       caption: post?.caption || "",
       file: [],
       location: post?.location || "",
-      tags: post?.tags?.join(",") || "",
+      tags: Array.isArray(post?.tags) ? post.tags.join(",") : "",
+
     },
   });
 
@@ -175,10 +176,11 @@ const PostForm = ({ post, action }: any) => {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={onSubmit}
-        className="flex flex-col gap-6 w-full max-w-md mx-auto py-8 overflow-auto"
-      >
+     <form
+          onSubmit={onSubmit}
+          className="flex flex-col gap-6 w-full max-w-md mx-auto py-8"
+        >
+
         {/* Caption */}
         <FormField
           control={form.control}

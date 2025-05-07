@@ -1,6 +1,3 @@
-
-
-
 import { useEffect, useState } from "react";
 import Loader from "@/components/shared/Loader";
 // import PostStats from "@/components/shared/PostStats";
@@ -127,11 +124,11 @@ const PostDetails = () => {
             <div className="flex flex-col flex-1 w-full small-medium lg:base-regular">
               <p>{post?.caption}</p>
               <ul className="flex gap-1 mt-2">
-                {post?.tags?.map((tag: string) => (
+                {Array.isArray(post?.tags) ? post.tags.map((tag: string) => (
                   <li key={tag} className="text-light-3">
                     #{tag}
                   </li>
-                ))}
+                )) : null}
               </ul>
             </div>
             

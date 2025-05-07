@@ -85,25 +85,26 @@ const PostCard = ({ post, isSaved = false, onToggleSave }: PostCardProps) => {
       <Link to={`/posts/${post.id}`}>
         <div className="small-medium lg:base-medium py-5">
           <p>{post.caption}</p>
-          {/* <ul className="flex gap-1 mt-2">
-            {post.tags.map((tag: string) => (
-              <li key={tag} className="text-light-3">#{tag}</li>
-            ))}
-          </ul> */}
-          
 
-<ul className="flex gap-1 mt-2">
-  {(Array.isArray(post.tags) 
-    ? post.tags
-    : typeof post.tags === "string"
-      ? (post.tags as string).split(',').map(tag => tag.trim())
-      : []
-  ).map((tag: string) => (
-    <li key={tag} className="text-light-3">#{tag}</li>
-  ))}
-</ul>
-
-
+          <div className="flex flex-wrap gap-1 mt-2">
+            {(() => {
+              let tagsArray: string[] = [];
+              if (Array.isArray(post.tags)) {
+                tagsArray = post.tags as string[];
+              } else if (typeof post.tags === "string") {
+                tagsArray = (post.tags as string).split(',').map(tag => tag.trim());
+              }
+              
+              // Clean up tags that might be in array string format like "['tag1']"
+              return tagsArray.map((tag: string) => {
+                // Remove any array notation, quotes, brackets
+                const cleanTag = tag.toString().replace(/[\[\]'"]/g, '');
+                return cleanTag ? (
+                  <span key={cleanTag} className="text-light-3">#{cleanTag}</span>
+                ) : null;
+              });
+            })()}
+          </div>
         </div>
         <img
           src={post.image_url || "/assets/icons/profile-placeholder.svg"}
