@@ -25,7 +25,8 @@ export const UsersProvider = ({ children }: { children: ReactNode }) => {
   const [filteredUsers, setFilteredUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  
+  const [, setSearchQuery] = useState("");
 
   const fetchUsers = async () => {
     try {
