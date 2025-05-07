@@ -47,11 +47,11 @@ const LeftSidebar = () => {
   };
 
   return (
-    <nav className="leftsidebar bg-black text-white h-screen w-64 flex flex-col justify-between px-5 py-10">
-      <div className="flex flex-col gap-10">
+    <nav className="leftsidebar bg-black text-white h-screen w-64 fixed top-0 left-0 flex flex-col justify-between px-5 py-10 overflow-y-auto">
+      <div className="flex flex-col gap-6">
         {/* Logo */}
         <Link to="/" className="text-3xl font-bold text-white tracking-wide">
-          Work Hive
+          Dev Space
         </Link>
 
         {/* User Info */}
@@ -70,13 +70,12 @@ const LeftSidebar = () => {
             )}
             <div className="flex flex-col">
               <p className="font-semibold">{user?.user_metadata?.name}</p>
-              {/* <p className="text-sm text-gray-400">{user?.user_metadata?.username}</p> */}
             </div>
           </Link>
         )}
 
         {/* Navigation Links */}
-        <ul className="flex flex-col gap-4">
+        <ul className="flex flex-col gap-2">
           {sidebarLinks.map((link: INavLink) => {
             const isActive = pathname === link.route;
             return (
@@ -105,7 +104,7 @@ const LeftSidebar = () => {
       {/* Logout Button */}
       <Button
         variant="ghost"
-        className="flex items-center gap-3 text-white hover:bg-gray-800"
+        className="flex items-center gap-3 text-white hover:bg-gray-800 w-full justify-start"
         onClick={handleLogout}
       >
         <img src="/assets/icons/logout.svg" alt="logout" className="h-5 w-5" />

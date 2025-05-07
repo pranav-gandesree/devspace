@@ -10,7 +10,7 @@ const Explore = () => {
   const [searchValue, setSearchValue] = useState("");
   const [searchedPosts, setSearchedPosts] = useState<any[]>([]);
   const [page, setPage] = useState(1);
-  const { ref, inView } = useInView();
+  const { inView } = useInView();
 
   // Helper: merge profile info into posts
   const mergeProfiles = (postsData: any[], profiles: any[]) => {
@@ -75,7 +75,9 @@ const Explore = () => {
 
       if (profilesError) throw profilesError;
 
-      const enriched = mergeProfiles(postsData, profiles);
+      const enriched = mergeProfiles(postsData, profiles)
+   
+      
       setSearchedPosts(enriched);
     } catch (err: any) {
       console.error("Error fetching search results:", err.message);
@@ -100,47 +102,46 @@ const Explore = () => {
   const shouldShowPosts = !shouldShowSearchResults && posts.length === 0;
 
   return (
-    <div className="explore-container">
-      <div className="explore-inner_container">
-        <h2 className="h3-bold md:h2-bold w-full">Search Posts</h2>
-        <div className="flex gap-1 px-4 w-full rounded-lg bg-dark-4">
-          <img src="/assets/icons/search.svg" alt="search" width={24} height={24} />
-          <Input
-            type="text"
-            placeholder="Search"
-            className="explore-search md:w-420"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-          />
+    <div className="explore-container ml-0 md:ml-64">
+      <div className="max-w-4xl mx-auto px-2 md:px-4 py-8">
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold mb-6">Explore</h2>
+          <div className="relative">
+            <div className="flex gap-1 px-4 w-full rounded-lg bg-gray-900">
+              <img src="/assets/icons/search.svg" alt="search" width={24} height={24} className="opacity-50" />
+              <Input
+                type="text"
+                placeholder="Search posts..."
+                className="explore-search bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-white placeholder:text-gray-400"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Popular Section */}
+        <div className="flex-between w-full mb-8">
+          <h3 className="text-2xl font-semibold">Popular Today</h3>
+          <div className="flex-center gap-3 bg-gray-900 rounded-xl px-4 py-2 cursor-pointer hover:bg-gray-800 transition-colors">
+            <p className="text-sm font-medium">All</p>
+            <img src="/assets/icons/filter.svg" alt="filter" width={20} height={20} className="opacity-50" />
+          </div>
+        </div>
+
+        {/* Posts or Search Results */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {shouldShowSearchResults ? (
+            <SearchResults isSearchFetching={false} searchedPosts={searchedPosts} />
+          ) : shouldShowPosts ? (
+            <div className="col-span-2 text-center py-12 bg-gray-900 rounded-lg">
+              <p className="text-gray-400">No posts found</p>
+            </div>
+          ) : (
+            <GridPostList posts={posts} />
+          )}
         </div>
       </div>
-
-      {/* Popular Section */}
-      <div className="flex-between w-full max-w-5xl mt-16 mb-7">
-        <h3 className="body-bold md:h3-bold">Popular Today</h3>
-        <div className="flex-center gap-3 bg-dark-3 rounded-xl px-4 py-2 cursor-pointer">
-          <p className="small-medium md:base-medium text-light-2">All</p>
-          <img src="/assets/icons/filter.svg" alt="filter" width={20} height={20} />
-        </div>
-      </div>
-
-
-
-
-
-      {/* Posts or Search Results */}
-      <div className="flex flex-wrap gap-9 w-full max-w-5xl">
-        {shouldShowSearchResults ? (
-          <SearchResults isSearchFetching={false} searchedPosts={searchedPosts} />
-        ) : shouldShowPosts ? (
-          <p className="text-light-4">End Of Posts</p>
-        ) : (
-          <GridPostList posts={posts} />
-        )}
-      </div>
-
-      {/* Infinite Scroll Trigger */}
-      {!shouldShowSearchResults && posts.length > 0 && <div ref={ref} className="mt-10" />}
     </div>
   );
 };

@@ -2,17 +2,17 @@ import { useEffect, useState } from "react";
 import Loader from "@/components/shared/Loader";
 import { PostCard } from "@/components/shared";
 import { supabase } from "@/lib/supabase/SupabaseClient";
+import { useUserContext } from "@/context/UserContext";
 
 const Home = () => {
+  const { user } = useUserContext();
   const [posts, setPosts] = useState<any[]>([]);
   const [isPostLoading, setIsPostLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-
+  const [savedPostIds, setSavedPostIds] = useState<string[]>([]);
 
   const fetchPosts = async () => {
     setIsPostLoading(true);
-  
     try {
       // Join posts with profiles on the creator field
       const { data: postsData, error: postsError } = await supabase
@@ -26,9 +26,7 @@ const Home = () => {
           )
         `)
         .order("created_at", { ascending: false });
-  
       if (postsError) throw postsError;
-  
       const postsWithCreators = postsData.map((post) => ({
         ...post,
         creator: {
@@ -37,7 +35,6 @@ const Home = () => {
           imageUrl: post.profiles.avatar_url,
         },
       }));
-  
       setPosts(postsWithCreators);
     } catch (error: any) {
       console.log("Error fetching posts:", error.message);
@@ -47,20 +44,43 @@ const Home = () => {
     }
   };
 
-  
+  const fetchSavedPosts = async () => {
+    if (!user?.id) return;
+    const { data, error } = await supabase
+      .from('saved_posts')
+      .select('post_id')
+      .eq('user_id', user.id);
+    if (!error && data) {
+      setSavedPostIds(data.map((item: any) => item.post_id));
+    }
+  };
 
-
-
- // Call fetchPosts when the component mounts
   useEffect(() => {
     fetchPosts();
-  }, []);
+    fetchSavedPosts();
+    // eslint-disable-next-line
+  }, [user?.id]);
 
+  const handleToggleSave = async (postId: string) => {
+    if (!user?.id) return;
+    if (!savedPostIds.includes(postId)) {
+      // Save post
+      await supabase.from('saved_posts').insert({
+        user_id: user.id,
+        post_id: postId,
+        saved_at: new Date().toISOString(),
+      });
+      setSavedPostIds((prev) => [...prev, postId]);
+    } else {
+      // Unsave post
+      await supabase.from('saved_posts').delete().eq('user_id', user.id).eq('post_id', postId);
+      setSavedPostIds((prev) => prev.filter((id) => id !== postId));
+    }
+  };
 
   if (error) {
     return <div className="text-red-500">Error loading posts: {error}</div>;
   }
-
 
   return (
     <div className="flex flex-1">
@@ -72,7 +92,12 @@ const Home = () => {
           ) : (
             <ul className="flex flex-col flex-1 gap-9 w-full">
               {posts.map((post) => (
-                <PostCard post={post} key={post.id} />
+                <PostCard
+                  post={post}
+                  key={post.id}
+                  isSaved={savedPostIds.includes(post.id)}
+                  onToggleSave={() => handleToggleSave(post.id)}
+                />
               ))}
             </ul>
           )}

@@ -5,7 +5,7 @@ import { IUser } from "@/types";
 
 type GridPostListProps = {
   posts?: {
-    $id: string;
+    id: string;
     image_url: string;
     creator: IUser;
   }[];
@@ -23,8 +23,9 @@ const GridPostList = ({
   return (
     <ul className="grid-container">
       {posts?.map((post) => (
-        <li key={post.$id} className="relative min-w-80 h-80">
-          <Link to={`/posts/${post.$id}`} className="grid-post_link">
+          
+        <li key={post.id} className="relative min-w-80 h-80">
+          <Link to={`/posts/${post.id}`} className="grid-post_link">
             <img
               src={post.image_url}
               alt="post"
@@ -47,7 +48,7 @@ const GridPostList = ({
             
             <PostStats
   post={{
-    id: post.$id, 
+    id: post.id, 
     image_url: post.image_url,
     creator: {
       id: post.creator.id,

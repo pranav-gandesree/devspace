@@ -3,15 +3,47 @@ import { multiFormatDateString } from "@/lib/utils";
 import { useUserContext } from "@/context/UserContext";
 // import PostStats from "./PostStats";
 import { IPost } from "@/types";
+import React from "react";
 
 type PostCardProps = {
   post: IPost;
+  isSaved?: boolean;
+  onToggleSave?: () => void;
 };
 
-const PostCard = ({ post }: PostCardProps) => {
+const PostCard = ({ post, isSaved = false, onToggleSave }: PostCardProps) => {
   const { user } = useUserContext();
+  const [localSaved, setLocalSaved] = React.useState(isSaved);
+
+  React.useEffect(() => {
+    setLocalSaved(isSaved);
+  }, [isSaved]);
 
   if (!post.creator) return null;
+
+  const handleSaveClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (onToggleSave) {
+      onToggleSave();
+      return;
+    }
+    if (!user?.id) return;
+    const { supabase } = await import('@/lib/supabase/SupabaseClient');
+    if (!localSaved) {
+      // Save post
+      await supabase.from('saved_posts').insert({
+        user_id: user.id,
+        post_id: post.id,
+        saved_at: new Date().toISOString(),
+      });
+      setLocalSaved(true);
+    } else {
+      // Unsave post
+      await supabase.from('saved_posts').delete().eq('user_id', user.id).eq('post_id', post.id);
+      setLocalSaved(false);
+    }
+  };
 
   return (
     <div className="post-card">
@@ -57,6 +89,20 @@ const PostCard = ({ post }: PostCardProps) => {
           className="post-card_img"
         />
       </Link>
+
+      <div className="flex gap-4 items-center px-4 py-2">
+        {/* Love (heart) icon - static */}
+        <img src="/assets/icons/like.svg" alt="love" width={24} height={24} style={{ cursor: 'pointer' }} />
+        {/* Bookmark (save) icon */}
+        <img
+          src={localSaved ? "/assets/icons/saved.svg" : "/assets/icons/bookmark.svg"}
+          alt={localSaved ? "saved" : "save"}
+          width={24}
+          height={24}
+          style={{ cursor: 'pointer', filter: localSaved ? 'drop-shadow(0 0 2px #6366f1)' : 'none' }}
+          onClick={handleSaveClick}
+        />
+      </div>
 
       {/* {user?.id && <PostStats post={post} userId={user.id} />} */}
     </div>

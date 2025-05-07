@@ -26,29 +26,6 @@ const SignupForm = () => {
   });
 
 
-  // const handleSignup = async ({ name, email, password }: { name: string; email: string; password: string }) => {
-
-  //   const { data, error } = await supabase.auth.signUp({
-  //     email,
-  //     password,
-  //     options: {
-  //       data: {
-  //         name, 
-  //       },
-  //     },
-  //   });
-
-  //   if (error) {
-  //     alert(error.message);
-  //   } else {
-  //     navigate("/sign-in");
-  //     console.log("Signed up:", data);
-  //     // console.log('Signed up ✅', data.session?.access_token);
-  //   }
-  // };
-
-
-
   
   const handleSignup = async ({
     name,
